@@ -1,0 +1,323 @@
+﻿import java.awt.EventQueue;
+
+import javax.swing.JPanel;
+import java.sql.*;
+import sun.io.*;
+import javax.swing.JLabel;
+import java.awt.Font;
+
+import javax.sound.sampled.AudioInputStream;
+import javax.swing.ImageIcon;
+import java.awt.Color;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.*;
+import javax.swing.JTextPane;
+import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
+
+import sun.audio.*;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+
+public class Question {
+	private JPanel contentPane;
+	private JLabel pic, totalScore;
+	private JLabel WELCOME;
+	public JButton ans1;
+	public JButton ans2;
+	public JButton ans3;
+	public JButton ans4;
+//	public HighScore hScore;
+	public Question q;
+	static AudioStream audio;
+	public int counter=1;
+	public static int score=0;
+	private String sound="C:\\Users\\SOM\\Desktop\\java\\ProjectThaiPray\\sound\\1.wav";
+	private String[] answer = new String[41];
+	private JButton btnStop;
+	public JButton highScore;
+	private JLabel bg;
+	Connection con = null;
+	PreparedStatement pstmt = null;
+	ResultSet rset = null;
+	Statement stmt = null;
+
+	private JFrame frame;
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					Question window = new Question();
+					window.frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the application.
+	 */
+	public Question() {
+	
+//		hScore = new HighScore();
+//		hScore.setVisible(false);
+//		hScore.setBounds(0, 0, 750, 450);
+//		add(hScore);
+		
+		answer[1]=" บูชาพระรัตนตรัย";// answer //1
+		answer[2]="อารธนาศีล 5";
+		answer[3]="สมาทานศีล 5";
+		answer[4]="แผ่เมตตา";
+		answer[5]="กาฟักไข่";
+		answer[6]="ตี่จับ";
+		answer[7]="ชักเย่อ";//answer //3
+		answer[8]="วิ่งเปี้ยว";
+		answer[9]="โพงพาง";
+		answer[10]="หมากเก็บ";
+		answer[11]="เสือไล่หมู";
+		answer[12]="อ้ายเข้อ้ายโขง";//answer //4
+		answer[13]="เสือกันวัว";
+		answer[14]="ตีโป่ง";
+		answer[15]="เก้าอี้ดนตรี";
+		answer[16]="วิ่งเปี้ยว";// answer //4
+		answer[17]="รีรีข้าวสาร";
+		answer[18]="โยกเยก";// answer //2
+		answer[19]="เสือตกถัง";
+		answer[20]="วิ่งสามขา";
+		answer[21]="ตกกะทะ";//answer //1
+		answer[22]="มะล๊อกก๊อกแก๊ก";
+		answer[23]="โป้งแปะ";
+		answer[24]="มอญซ่อนผ้า";
+		answer[25]="ซักส้าว";
+		answer[26]="เป่ายิ้งฉุบ";
+		answer[27]="กล้องกบ";
+		answer[28]="งูกินหาง";//answer //4
+		answer[29]="ข้าวหลามตัด";
+		answer[30]="ปิดตาตีหม้อ";//answer //2
+		answer[31]="แตะหุ่น";
+		answer[32]="จีจ่อเจี๊ยบ";
+		answer[33]="วิ่งทน";
+		answer[34]="แมงมุม";
+		answer[35]="วิ่งกระสอบ";// answer //3
+		answer[36]="ว่าวไทย";
+		answer[37]="จีจ่อเจี๊ยบ";//answer //1
+		answer[38]="ข้าวหลามตัด";
+		answer[39]="ตีตบแผละ";
+		answer[40]="หัวล้านชนกัน";
+		
+		frame = new JFrame();
+		frame.setBounds(100, 100,850, 650);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.getContentPane().setLayout(null);
+		
+		JLabel lblNewLabel = new JLabel("");
+		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNewLabel.setIcon(new ImageIcon("C:\\Users\\SOM\\Desktop\\java\\ProjectThaiPray\\question\\q1.png"));
+		lblNewLabel.setBounds(21, 66, 790 , 371);
+		frame.getContentPane().add(lblNewLabel);
+		
+		ans1 = new JButton(answer[1]);
+		ans1.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if ((counter !=1 && counter !=6 && counter!=10) && counter<=10){
+					changeqs();
+				}
+				else if(counter == 1 || counter == 6 || counter == 10){
+					score++;
+					changeqs();
+				}
+			}
+		});
+	
+		ans1.setBounds(63, 469, 335, 46);
+		frame.getContentPane().add(ans1);
+		
+		
+		
+		ans2 = new JButton(answer[2]);
+		ans2.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if ((counter !=5 && counter !=8 ) && counter<=10){
+					changeqs();
+				}
+				else if(counter == 5 || counter == 8 ){
+					score++;
+					changeqs();
+				}
+			}
+		});
+		ans2.setBounds(446, 469, 335, 46);
+		frame.getContentPane().add(ans2);
+		
+		
+		
+		ans3 = new JButton(answer[3]);
+		ans3.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if ((counter !=2 && counter !=9 ) && counter<=10){
+					changeqs();
+				}
+				else if(counter == 2 || counter == 9 ){
+					score++;
+					changeqs();
+				}
+			}
+		});
+		ans3.setBounds(63, 540, 335, 46);
+		frame.getContentPane().add(ans3);
+		
+		
+		
+		ans4 = new JButton(answer[4]);
+		ans4.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if ((counter !=3 && counter !=4 && counter!=7) && counter<=10){
+					changeqs();
+				}
+				else if(counter == 3 || counter == 4 || counter == 7){
+					score++;
+					changeqs();
+				}
+			}
+		});
+		ans4.setBounds(446, 540, 335, 46);
+		frame.getContentPane().add(ans4);
+		
+		
+		
+		JButton play = new JButton("");
+		play.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				AudioPlayer.player.start(audio);
+			}
+		});
+		play.setIcon(new ImageIcon("C:\\Users\\SOM\\Desktop\\java\\ProjectThaiPray\\pic\\1448154746_play.png"));
+		play.setBounds(21, 0, 83, 61);
+		frame.getContentPane().add(play);
+		
+		JButton pause = new JButton("");
+		pause.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				AudioPlayer.player.stop(audio);
+			}
+		});
+		pause.setIcon(new ImageIcon("C:\\Users\\SOM\\Desktop\\java\\ProjectThaiPray\\pic\\1448154755_pause.png"));
+		pause.setBounds(127, 0, 83, 61);
+		frame.getContentPane().add(pause);
+		
+		JButton high = new JButton("New button");
+		high.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+//				hScore.setVisible(true);
+//				high.setVisible(false);
+			}
+		});
+		high.setBounds(483, 0, 259, 61);
+		frame.getContentPane().add(high);
+		
+		
+		
+		JLabel lblNewLabel_1 = new JLabel("High");
+		lblNewLabel_1.setIcon(new ImageIcon("C:\\Users\\SOM\\Desktop\\java\\ProjectThaiPray\\pic\\1266817655.jpg"));
+		lblNewLabel_1.setBounds(0, 0, 834, 611);
+		frame.getContentPane().add(lblNewLabel_1);
+		
+		try{									
+			InputStream in = new FileInputStream(new File (sound));
+            audio = new AudioStream(in);
+        }
+        catch(Exception e){
+        }
+	}
+		private void add(JLabel totalScore2) {
+		// TODO Auto-generated method stub
+		
+	}
+
+		private void changeqs(){
+			counter++;
+			pic.setIcon(new ImageIcon("D:\\JAVA\\Projet Group 5\\pic\\0"+counter+".jpg"));
+			
+			if(counter==2){
+				ans1.setText(answer[5]);
+				ans2.setText(answer[6]);
+				ans3.setText(answer[7]);
+				ans4.setText(answer[8]);
+			}
+			else if(counter==3){
+				ans1.setText(answer[9]);
+				ans2.setText(answer[10]);
+				ans3.setText(answer[11]);
+				ans4.setText(answer[12]);
+			}
+			else if(counter==4){
+				ans1.setText(answer[13]);
+				ans2.setText(answer[14]);
+				ans3.setText(answer[15]);
+				ans4.setText(answer[16]);
+			}
+			else if(counter==5){
+				ans1.setText(answer[17]);
+				ans2.setText(answer[18]);
+				ans3.setText(answer[19]);
+				ans4.setText(answer[20]);
+			}
+			else if(counter==6){
+				ans1.setText(answer[21]);
+				ans2.setText(answer[22]);
+				ans3.setText(answer[23]);
+				ans4.setText(answer[24]);
+			}
+			else if(counter==7){
+				ans1.setText(answer[25]);
+				ans2.setText(answer[26]);
+				ans3.setText(answer[27]);
+				ans4.setText(answer[28]);
+			}
+			else if(counter==8){
+				ans1.setText(answer[29]);
+				ans2.setText(answer[30]);
+				ans3.setText(answer[31]);
+				ans4.setText(answer[32]);
+			}
+			else if(counter==9){
+				ans1.setText(answer[33]);
+				ans2.setText(answer[34]);
+				ans3.setText(answer[35]);
+				ans4.setText(answer[36]);
+			}
+			else if(counter==10) {
+				ans1.setText(answer[37]);
+				ans2.setText(answer[38]);
+				ans3.setText(answer[39]);
+				ans4.setText(answer[40]);
+			}
+			else if(counter == 11){
+				ans1.setVisible(false);
+				ans2.setVisible(false);
+				ans3.setVisible(false);
+				ans4.setVisible(false);
+				WELCOME.setVisible(false);
+				totalScore.setText("คะแนนที่ทำได้คือ "+ score);
+				highScore.setVisible(true);
+
+		}
+
+	}
+
+}
